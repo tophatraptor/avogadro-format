@@ -24,9 +24,11 @@ Usage:
 usage: ``` avogadro.py [-h] [--outfile OUTFILE] eventlist scoresheet```
 
 positional arguments:
-  eventlist          Path to alphabetically-arranged, newline-delimited list
+
+  eventlist - Path to alphabetically-arranged, newline-delimited list
                      of ISO events
-  scoresheet         Path to scoresheet tsv
+
+  scoresheet - Path to scoresheet tsv
 
 optional arguments:
 
