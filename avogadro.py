@@ -1,6 +1,6 @@
 import sys
 import os
-
+import argparse
 #Ordinal code from user 'Winston Ewert' on stackexchange
 SUFFIXES = {1: 'st', 2: 'nd', 3: 'rd'}
 def ordinal(num):
@@ -13,18 +13,36 @@ def ordinal(num):
         suffix = SUFFIXES.get(num % 10, 'th')
     return str(num) + suffix
 
-def generator(inputfile):
-    for line in inputfile:
-        yield line.strip()
+def main():
+    parser = argparse.ArgumentParser(description='Tool for formatting python output in an easy-to-read format')
+    parser.add_argument("eventlist",help="Path to alphabetically-arranged, newline-delimited list of ISO events")
+    parser.add_argument("scoresheet",help="Path to scoresheet tsv")
+    parser.add_argument("--outfile",help="Path to output file")
+    args = parser.parse_args()
+    event_file = args.eventlist
+    scoresheet_file = args.scoresheet
+    outfile = args.outfile
+    events = []
+    with open(event_file,'r') as fh:
+        for line in fh:
+            events.append(line.strip())
+    school_list = []
+    with open(scoresheet_file,'r') as fh:
+        for line in fh:
+            school_list.append(line.strip().split('\t'))
+    if(outfile):
+        with open(outfile,'w') as fh:
+            for school in school_list:
+                fh.write("{} - {} place\n".format(school[0],ordinal(int(school[-1]))))
+                for i, x in enumerate(events):
+                    fh.write(x + " - " + ordinal(int(school[i+1])) + "\n")
+                fh.write('\n')
+    else:
+        for school in school_list:
+            print("{} - {} place".format(school[0],ordinal(int(school[-1]))))
+            for i, x in enumerate(events):
+                print(x + " - " +ordinal(int(school[i+1])))
+            print('\n')
 
-f1 = open(sys.argv[1],'rt')
-lines = generator(f1)
-eventlist = []
-for x in lines:
-    eventlist.append(x)
-f2 = open(sys.argv[2],'rt')
-lines = generator(f2)
-for x in lines:
-     scorelist = x.split()
-     for i in range(len(eventlist)):
-         print("{}: {}".format(eventlist[i],ordinal(int(scorelist[i]))))
+if __name__=='__main__':
+    main()
